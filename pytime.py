@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from selenium import webdriver
+from time import sleep
 import argparse
 import requests
 import statistics
@@ -62,12 +63,6 @@ def open_webpage(url):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
-    parser.add_argument('-u', '--urllist', action='store_true', help="Use predefined list of urls")
-    parser.add_argument('url', nargs='?', default=url_list[0])
-    parser.add_argument('iterations', nargs='?', type=int, default=1)
-    args = parser.parse_args()
-
     backend_performance_list = []
     frontend_performance_list = []
 
@@ -99,4 +94,12 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
+    parser.add_argument('-u', '--urllist', action='store_true', help="Use predefined list of urls")
+    parser.add_argument('url', nargs='?', default=url_list[0])
+    parser.add_argument('iterations', nargs='?', type=int, default=1)
+    args = parser.parse_args()
+
+    while True:
+        main()
+        sleep(15*60)  # Run each 15 minutes
