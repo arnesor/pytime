@@ -7,7 +7,10 @@ import requests
 import statistics
 import sys
 
-hyperlink = "http://google.no"
+url_list = ["https://www.google.no/",
+            "https://www.nrk.no/",
+            "http://www.eidskog-o-lag.no/",
+            "https://www.eidskog.kommune.no/"]
 
 filename = "webtimingslog.txt"
 
@@ -60,19 +63,31 @@ def open_webpage(url):
 
 def main():
     parser = argparse.ArgumentParser(description=sys.modules[__name__].__doc__)
-    parser.add_argument('url', nargs='?', default=hyperlink)
+    parser.add_argument('-u', '--urllist', action='store_true', help="Use predefined list of urls")
+    parser.add_argument('url', nargs='?', default=url_list[0])
     parser.add_argument('iterations', nargs='?', type=int, default=1)
     args = parser.parse_args()
 
     backend_performance_list = []
     frontend_performance_list = []
-    for _ in range(args.iterations):
-        result = open_webpage(args.url)
-        if result[0] is not None:
-            backend_performance_list.append(result[0])
-        if result[1] is not None:
-            frontend_performance_list.append(result[1])
-        write_to_file(args.url, result[0], result[1])
+
+    if args.urllist:
+        for _ in range(args.iterations):
+            for link in url_list:
+                result = open_webpage(link)
+                if result[0] is not None:
+                    backend_performance_list.append(result[0])
+                if result[1] is not None:
+                    frontend_performance_list.append(result[1])
+                write_to_file(link, result[0], result[1])
+    else:
+        for _ in range(args.iterations):
+            result = open_webpage(args.url)
+            if result[0] is not None:
+                backend_performance_list.append(result[0])
+            if result[1] is not None:
+                frontend_performance_list.append(result[1])
+            write_to_file(args.url, result[0], result[1])
 
     print('Backend       : {}'.format(backend_performance_list))
     print('Frontend      : {}'.format(frontend_performance_list))
@@ -81,7 +96,6 @@ def main():
         print('Backend median: {}'.format(statistics.median(backend_performance_list)))
         print('Backend min   : {}'.format(min(backend_performance_list)))
         print('Backend max   : {}'.format(max(backend_performance_list)))
-
 
 
 if __name__ == '__main__':
